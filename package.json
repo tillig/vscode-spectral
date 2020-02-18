@@ -1,0 +1,122 @@
+{
+  "activationEvents": [
+    "*"
+  ],
+  "author": "Travis Illig",
+  "bugs": {
+    "url": "https://github.com/tillig/vscode-spectral/issues"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "contributes": {
+    "configuration": {
+      "properties": {
+        "spectral.enable": {
+          "default": true,
+          "description": "Controls whether or not Spectral is enabled.",
+          "scope": "resource",
+          "type": "boolean"
+        },
+        "spectral.rulesetFile": {
+          "description": "Location of the ruleset file to use when validating. If omitted, the default is a .spectral.yml/.spectral.json in the same folder as the document being validated. Paths are relative to the workspace.",
+          "scope": "resource",
+          "type": "string"
+        },
+        "spectral.run": {
+          "default": "onType",
+          "description": "Run the linter on save (onSave) or as you type (onType).",
+          "enum": [
+            "onSave",
+            "onType"
+          ],
+          "scope": "resource",
+          "type": "string"
+        },
+        "spectral.trace.server": {
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server.",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "scope": "window",
+          "type": "string"
+        },
+        "spectral.validateFiles": {
+          "description": "An array of file globs which should be validated by Spectral. If language identifiers are also specified, the file must match both in order to be validated.",
+          "items": {
+            "type": "string"
+          },
+          "scope": "resource",
+          "type": "array"
+        },
+        "spectral.validateLanguages": {
+          "default": [
+            "json",
+            "yaml"
+          ],
+          "description": "An array of language IDs which should be validated by Spectral. If file globs are also specified, the file must match both in order to be validated.",
+          "items": {
+            "type": "string"
+          },
+          "scope": "resource",
+          "type": "array"
+        }
+      },
+      "title": "Spectral",
+      "type": "object"
+    }
+  },
+  "description": "Lint support for OpenAPI, JSON, and YAML using Spectral.",
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.42.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "eslint": "^6.8.0",
+    "glob": "^7.1.6",
+    "merge-options": "^2.0.0",
+    "mocha": "^7.0.1",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.5",
+    "vscode-test": "^1.3.0",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
+  },
+  "displayName": "Spectral Linter",
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "icon": "icon.png",
+  "keywords": [
+    "multi-root ready"
+  ],
+  "license": "MIT",
+  "main": "./client/out/extension",
+  "name": "vscode-spectral",
+  "publisher": "TravisIllig",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tillig/vscode-spectral"
+  },
+  "scripts": {
+    "clean": "rimraf client/out && rimraf server/out",
+    "compile": "tsc -b",
+    "compile:client": "tsc -b ./client/tsconfig.json",
+    "compile:server": "tsc -b ./client/tsconfig.json",
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "eslint --config ./client/.eslintrc.json ./client/src/*.ts",
+    "lint:server": "eslint --config ./server/.eslintrc.json ./client/src/*.ts",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+    "vscode:prepublish": "npm run webpack",
+    "watch": "tsc -b -w",
+    "webpack": "npm run clean && webpack --mode production --config ./client/webpack.config.js && webpack --mode production --config ./server/webpack.config.js",
+    "webpack:dev": "npm run clean && webpack --mode none --config ./client/webpack.config.js && webpack --mode none --config ./server/webpack.config.js"
+  },
+  "version": "1.0.0"
+}

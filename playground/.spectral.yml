@@ -1,0 +1,88 @@
+extends: spectral:oas
+formats: ["oas3"]
+rules:
+  # Disable base rules we don't want.
+  #
+  # Don't want email required in contact. Custom update for this below.
+  contact-properties: false
+  # License not required.
+  info-license: false
+  # Bug in example-value-or-externalValue: https://github.com/stoplightio/spectral/issues/883
+  example-value-or-externalValue: false
+
+  # Enable rules that aren't on by default.
+  tag-description: true
+
+  # Custom rules.
+  camelcase-parameters:
+    description: Path and query parmeters must use camelCase.
+    given: $..parameters[?(@.in=="query" || @.in=="path")]
+    then:
+      field: name
+      function: casing
+      functionOptions:
+        type: camel
+  camelcase-properties:
+    description: Properties defined inline in schema must use camelCase.
+    given: $..[?(@.type=="object")].properties
+    then:
+      field: '@key'
+      function: casing
+      functionOptions:
+        type: camel
+  camelcase-segments:
+    description: Path segments must use camelCase.
+    given: $.paths
+    then:
+      field: '@key'
+      function: pattern
+      functionOptions:
+        # Matches /segment or /{segment} formats. Uses the same regex as the
+        # built-in "camelCase" Spectral function.
+        match: ^((\/[a-z][a-z0-9]*(?:[A-Z0-9][a-z0-9]+)*)|(\/\{[a-z][a-z0-9]*(?:[A-Z0-9][a-z0-9]+)*\}))+$
+  contact-name:
+    description: Contact name should be `Test Support`.
+    given: $.info.contact
+    then:
+      field: name
+      function: pattern
+      functionOptions:
+        match: ^Test Support$
+  contact-properties-custom:
+    description: Contact should have `name` and `url` properties.
+    given: $.info.contact
+    then:
+      - field: name
+        function: truthy
+      - field: url
+        function: truthy
+  date-properties:
+    description: String properties with the `date` format must end in `Date`.
+    given: $..properties.[?(@.format=="date" && @.type=="string")]~
+    then:
+      function: pattern
+      functionOptions:
+        match: ((d)|(.D))ate$
+  date-time-properties:
+    description: String properties with the `date-time` format must end in `DateTime`.
+    given: $..properties.[?(@.format=="date-time" && @.type=="string")]~
+    then:
+      function: pattern
+      functionOptions:
+        match: ((d)|(.D))ateTime$
+  patch-mime-type:
+    description: PATCH operations must use JSON Patch and/or JSON Merge Patch with the correct MIME type.
+    given: $..paths..patch.requestBody.content
+    then:
+      field: '@key'
+      function: pattern
+      functionOptions:
+        match: ^application\/(json|merge)-patch\+json$
+  version-segment:
+    description: The second path segment should be a whole-number version like `v1`.
+    given: $.paths
+    then:
+      field: '@key'
+      function: pattern
+      functionOptions:
+        match: ^/[^/]+/v\d+/.+$

@@ -1,0 +1,39 @@
+openapi: '3.0.2'
+info:
+  title: Valid API
+  version: '1.0'
+  description: A valid doc that runs against all the rules.
+  contact:
+    name: Test Support
+    url: https://server.com
+servers:
+  - url: https://localhost
+tags:
+  - name: test
+    description: A test route.
+paths:
+  /root/v1/test:
+    get:
+      operationId: test-route
+      description: Gets a thing.
+      responses:
+        '200':
+          description: OK
+      tags:
+        - test
+  /root/v1/test/{id}:
+    get:
+      operationId: test-route-by-id
+      description: Gets a thing by ID.
+      parameters:
+        - in: path
+          name: id
+          description: An ID for the fake test object.
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+      tags:
+        - test

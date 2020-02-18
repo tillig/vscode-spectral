@@ -1,0 +1,17 @@
+{
+  "eslint.enable": true,
+  "eslint.workingDirectories": [
+    "./client",
+    "./server"
+  ],
+  "files.exclude": {
+    "out": false
+  },
+  "search.exclude": {
+    "out": true
+  },
+  "typescript.tsc.autoDetect": "off",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.tsserver.log": "off",
+  "typescript.tsserver.trace": "off"
+}

@@ -1,0 +1,25 @@
+{
+  "author": "Travis Illig",
+  "dependencies": {
+    "vscode-languageclient": "6.0.1"
+  },
+  "description": "Lint support for YAML, JSON, and OpenAPI using Spectral.",
+  "devDependencies": {
+    "@types/vscode": "^1.42.0"
+  },
+  "displayName": "Spectral Linter",
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "license": "MIT",
+  "name": "client",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tillig/vscode-spectral"
+  },
+  "scripts": {
+    "test": "node ../node_modules/mocha/bin/_mocha"
+  },
+  "version": "0.0.1"
+}

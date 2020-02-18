@@ -1,0 +1,6 @@
+{
+  "extends": "../.eslintrc.base.json",
+  "root": true,
+  "rules": {
+  }
+}
