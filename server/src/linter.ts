@@ -13,7 +13,7 @@ import {
   isOpenApiv3
 } from '@stoplight/spectral';
 import { parseYaml } from '@stoplight/spectral/dist/parsers';
-import { IParsedResult } from '@stoplight/spectral/dist/types';
+import { IParsedResult } from '@stoplight/spectral/dist/document';
 import { IRuleset } from '@stoplight/spectral/dist/types/ruleset';
 import { getLocationForJsonPath } from '@stoplight/yaml';
 
