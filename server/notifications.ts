@@ -13,6 +13,7 @@
 import { NotificationType } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+// eslint-disable-next-line
 export namespace StartWatcherNotification {
   /**
    * Notification type indicating a FileSystemWatcher should be started in the client.
@@ -27,6 +28,7 @@ export interface StartWatcherParams {
   path: string;
 }
 
+// eslint-disable-next-line
 export namespace ValidateNotification {
   /**
    * Notification type indicating a validation/linting operation should take place.

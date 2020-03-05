@@ -4,13 +4,13 @@ import {
   IRuleResult,
   Spectral,
   isJSONSchema,
-  isJSONSchemaDraft2019_09,
+  isJSONSchemaDraft2019_09, // eslint-disable-line
   isJSONSchemaDraft4,
   isJSONSchemaDraft6,
   isJSONSchemaDraft7,
   isJSONSchemaLoose,
   isOpenApiv2,
-  isOpenApiv3
+  isOpenApiv3,
 } from '@stoplight/spectral';
 import { parseYaml } from '@stoplight/spectral/dist/parsers';
 import { IParsedResult } from '@stoplight/spectral/dist/document';
@@ -29,7 +29,7 @@ const allFormats: Array<[string, FormatLookup]> = [
   ['json-schema-draft4', isJSONSchemaDraft4],
   ['json-schema-draft6', isJSONSchemaDraft6],
   ['json-schema-draft7', isJSONSchemaDraft7],
-  ['json-schema-2019-09', isJSONSchemaDraft2019_09]
+  ['json-schema-2019-09', isJSONSchemaDraft2019_09] // eslint-disable-line
 ];
 
 /**
@@ -39,18 +39,21 @@ const allFormats: Array<[string, FormatLookup]> = [
 export class Linter {
   private spectral = new Spectral();
 
+  /**
+   * Initializes a new instance of the linter.
+   */
   constructor() {
     for (const [format, lookup] of allFormats) {
       // Each document type that Spectral can lint gets registered with detectors.
-      this.spectral.registerFormat(format, document => lookup(document));
+      this.spectral.registerFormat(format, (document) => lookup(document));
     }
   }
 
   /**
    * Executes Spectral linting against a VS Code document.
-   * @param document - The document to lint/validate.
-   * @param ruleset - The ruleset to use during validation, if any.
-   * @returns The set of rule violations found. If no violations are found, this will be empty.
+   * @param {TextDocument} document - The document to lint/validate.
+   * @param {IRuleset|undefined} ruleset - The ruleset to use during validation, if any.
+   * @return {Promise<IRuleResult[]>} The set of rule violations found. If no violations are found, this will be empty.
    */
   public async lint(document: TextDocument, ruleset: IRuleset | undefined): Promise<IRuleResult[]> {
     // Unclear if we may have issues changing the ruleset on the shared Spectral
@@ -58,8 +61,7 @@ export class Linter {
     // document rather than using a single shared one via Linter.
     if (ruleset) {
       this.spectral.setRuleset(ruleset);
-    }
-    else {
+    } else {
       // No ruleset, so clear everything out.
       this.spectral.setRuleset({
         functions: {},
@@ -69,7 +71,7 @@ export class Linter {
 
     // It's unclear why JSON and YAML both get parsed as YAML, but that's how Spectral does it, sooooooo...
     const text = document.getText();
-    let spec = parseYaml(text);
+    const spec = parseYaml(text);
     const parsedResult: IParsedResult = {
       source: document.uri,
       parsed: spec,

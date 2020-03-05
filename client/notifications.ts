@@ -12,6 +12,7 @@
 
 import { NotificationType } from 'vscode-languageclient';
 
+// eslint-disable-next-line
 export namespace StartWatcherNotification {
   /**
    * Notification type indicating a FileSystemWatcher should be started in the client.

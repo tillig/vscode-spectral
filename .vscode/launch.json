@@ -15,7 +15,7 @@
       ],
       "name": "Launch Client",
       "outFiles": [
-        "${workspaceFolder}/client/out/**/*.js"
+        "${workspaceFolder}/client/**/*.js"
       ],
       "preLaunchTask": "npm: watch",
       "request": "launch",
@@ -28,7 +28,7 @@
       "address": "localhost",
       "name": "Attach to Server",
       "outFiles": [
-        "${workspaceFolder}/server/out/**/*.js"
+        "${workspaceFolder}/server/**/*.js"
       ],
       "port": 6262,
       "protocol": "inspector",

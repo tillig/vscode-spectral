@@ -4,7 +4,7 @@
 import {
   IConnection,
   NotificationHandler,
-  NotificationType
+  NotificationType,
 } from 'vscode-languageserver';
 
 /**
@@ -30,16 +30,32 @@ interface VersionProvider<P> {
  * where the results will no longer apply.
  */
 export class BufferedMessageQueue {
-
   private queue: Notification<any>[];
-  private notificationHandlers: Map<string, { handler: NotificationHandler<any>, versionProvider?: VersionProvider<any> }>;
+  private notificationHandlers: Map<string, { handler: NotificationHandler<any>; versionProvider?: VersionProvider<any> }>;
   private timer: NodeJS.Immediate | undefined;
 
+  /**
+   * Initializes a new queue.
+   * @param {IConnection} connection - The connection for communicating with clients.
+   */
   constructor(private connection: IConnection) {
     this.queue = [];
     this.notificationHandlers = new Map();
   }
 
+  /**
+   * Callback used by the queue to get a document version.
+   * @callback queue~versionProvider
+   * @param {P} params - The subject of the notification.
+   * @return {number} The document version.
+   */
+
+  /**
+   * Registers a notification and handler at the same time.
+   * @param {NotificationType<P, RO>} type - The type of notification to process.
+   * @param {NotificationHandler<P>} handler - The handler for the notification.
+   * @param {queue~versionProvider} versionProvider - A provider that gives the document version.
+   */
   public registerNotification<P, RO>(type: NotificationType<P, RO>, handler: NotificationHandler<P>, versionProvider?: (params: P) => number): void {
     this.connection.onNotification(type, (params) => {
       this.queue.push({
@@ -52,19 +68,34 @@ export class BufferedMessageQueue {
     this.notificationHandlers.set(type.method, { handler, versionProvider });
   }
 
-  public addNotificationMessage<P, RO>(type: NotificationType<P, RO>, params: P, version: number) {
+  /**
+   * Adds a message to the queue and kicks off processing.
+   * @param {NotificationType<P, RO>} type - The type of notification to add to the queue.
+   * @param {P} params - The subject of the notification.
+   * @param {number} version - The document version associated with the notification.
+   */
+  public addNotificationMessage<P, RO>(type: NotificationType<P, RO>, params: P, version: number): void {
     this.queue.push({
       method: type.method,
       params,
-      documentVersion: version
+      documentVersion: version,
     });
     this.trigger();
   }
 
+  /**
+   * Registers a handler for a notification.
+   * @param {NotificationType<P, RO>} type - The type of notification to process.
+   * @param {NotificationHandler<P>} handler - The handler for the notification.
+   * @param {queue~versionProvider} versionProvider - A provider that gives the document version.
+   */
   public onNotification<P, RO>(type: NotificationType<P, RO>, handler: NotificationHandler<P>, versionProvider?: (params: P) => number): void {
     this.notificationHandlers.set(type.method, { handler, versionProvider });
   }
 
+  /**
+   * Kicks off the queue for processing.
+   */
   private trigger(): void {
     if (this.timer || this.queue.length === 0) {
       return;
@@ -76,6 +107,10 @@ export class BufferedMessageQueue {
     });
   }
 
+  /**
+   * Runs through queued messages and processes them with the associated
+   * handler. Discards stale messages if needed.
+   */
   private processQueue(): void {
     const message = this.queue.shift() as Notification<any>;
     if (!message) {

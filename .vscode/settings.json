@@ -4,12 +4,8 @@
     "./client",
     "./server"
   ],
-  "files.exclude": {
-    "out": false
-  },
-  "search.exclude": {
-    "out": true
-  },
+  "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
   "typescript.tsc.autoDetect": "off",
   "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.tsserver.log": "off",
