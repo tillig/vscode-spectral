@@ -1,4 +1,4 @@
-/* global target */
+/* global mkdir, target */
 'use strict';
 
 require('shelljs/make');
@@ -37,7 +37,12 @@ target.package = async () => {
 
   // Prune the non-essentials
   run('npm run prepare:vsce');
-  mkdir(outputPath.artifacts);
+
+  try {
+    await fs.access(outputPath.artifacts);
+  } catch (err) {
+    mkdir(outputPath.artifacts);
+  }
   run(`vsce package -o ${outputPath.artifacts}`);
 
   // Put it back so the dev environment works again :)
