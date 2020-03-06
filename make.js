@@ -33,8 +33,15 @@ target.compile = () => {
 
 target.package = async () => {
   banner('Target: Package');
-  run('npm install --production');
+  run('npm install');
+
+  // Prune the non-essentials
+  run('npm run prepare:vsce');
+  mkdir(outputPath.artifacts);
   run(`vsce package -o ${outputPath.artifacts}`);
+
+  // Put it back so the dev environment works again :)
+  run('npm install');
 };
 
 target.publish = async (args) => {
