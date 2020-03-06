@@ -2,12 +2,12 @@
 **/*.ts
 **/tsconfig.base.json
 **/tsconfig.json
+**/tsconfig.tsbuildinfo
 **/tslint.json
+.editorconfig
 .gitignore
+.mocharc.json
 .vscode/**
 assets/**
-client/**
 playground/**
-server/**
-shared.webpack.config.js
 CONTRIBUTING.md

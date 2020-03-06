@@ -18,8 +18,5 @@
     "type": "git",
     "url": "https://github.com/tillig/vscode-spectral"
   },
-  "scripts": {
-    "test": "node ../node_modules/mocha/bin/_mocha"
-  },
   "version": "0.0.1"
 }

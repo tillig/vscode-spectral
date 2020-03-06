@@ -35,6 +35,19 @@
       "request": "attach",
       "sourceMaps": true,
       "type": "node"
+    },
+    {
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Mocha Tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "protocol": "inspector",
+      "request": "launch",
+      "type": "node"
     }
   ],
   "version": "0.2.0"

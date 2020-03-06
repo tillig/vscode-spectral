@@ -3,6 +3,8 @@
   "require": [
     "ts-node/register"
   ],
-  "slow": "5000",
-  "spec": "test/**/*.test.ts"
+  "spec": [
+    "client/test/**/*.test.ts",
+    "server/test/**/*.test.ts"
+  ]
 }

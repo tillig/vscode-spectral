@@ -5,7 +5,6 @@ import * as path from 'path';
 import { Minimatch } from 'minimatch';
 import {
   Diagnostic,
-  DiagnosticSeverity,
   DidChangeConfigurationNotification,
   DidChangeWatchedFilesNotification,
   DidChangeWorkspaceFoldersNotification,
@@ -18,7 +17,6 @@ import {
 import { WorkDoneProgress } from 'vscode-languageserver/lib/progress';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { URI } from 'vscode-uri';
-import { IRuleResult } from '@stoplight/spectral';
 import { getDefaultRulesetFile } from '@stoplight/spectral/dist/rulesets/loader';
 import { readRuleset } from '@stoplight/spectral/dist/rulesets/reader';
 import {
@@ -31,6 +29,7 @@ import {
   ValidateNotification,
 } from './notifications';
 import { BufferedMessageQueue } from './queue';
+import { makeDiagnostic } from './util';
 
 // eslint-disable-next-line
 namespace Is {
@@ -76,26 +75,6 @@ const linter = new Linter();
 let documents: TextDocuments<TextDocument>;
 
 /**
- * Converts a Spectral rule violation severity into a VS Code diagnostic severity.
- * @param {number} severity - The Spectral diagnostic severity to convert.
- * @return {DiagnosticSeverity} The converted severity for a VS Code diagnostic.
- */
-function convertSeverity(severity: number): DiagnosticSeverity {
-  switch (severity) {
-    case 1:
-      return DiagnosticSeverity.Error;
-    case 2:
-      return DiagnosticSeverity.Warning;
-    case 3:
-      return DiagnosticSeverity.Information;
-    case 4:
-      return DiagnosticSeverity.Hint;
-    default:
-      return DiagnosticSeverity.Error;
-  }
-}
-
-/**
  * Something in the environment changed, so clear the document cache and
  * re-validate all open documents based on whatever new settings are calculated.
  */
@@ -136,30 +115,6 @@ function getDocumentPath(documentOrUri: string | TextDocument | URI | undefined)
   }
 
   return uri.fsPath;
-}
-
-/**
- * Converts a Spectral rule violation to a VS Code diagnostic.
- * @param {IRuleResult} problem - The Spectral rule result to convert to a VS Code diagnostic message.
- * @return {IDiagnostic} The converted VS Code diagnostic to send to the client.
- */
-function makeDiagnostic(problem: IRuleResult): Diagnostic {
-  return {
-    range: {
-      start: {
-        line: problem.range.start.line,
-        character: problem.range.start.character,
-      },
-      end: {
-        line: problem.range.end.line,
-        character: problem.range.end.character,
-      },
-    },
-    severity: convertSeverity(problem.severity),
-    code: problem.code,
-    source: 'spectral',
-    message: problem.message,
-  };
 }
 
 /**
