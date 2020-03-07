@@ -1,10 +1,11 @@
-/* global mkdir, target */
+/* global mkdir, rm, target */
 'use strict';
 
 require('shelljs/make');
 const fs = require('fs').promises;
 const path = require('path');
 const ncp = require('child_process');
+const jsonpath = require('jsonpath');
 
 /** Build output paths. */
 const outputPath = {
@@ -17,6 +18,7 @@ target.all = () => {
   target.clean();
   target.compile();
   target.test();
+  target.package();
 };
 
 target.clean = () => {
@@ -33,20 +35,18 @@ target.compile = () => {
 
 target.package = async () => {
   banner('Target: Package');
-  run('npm install');
-
-  // Prune the non-essentials
-  run('npm run prepare:vsce');
-
   try {
     await fs.access(outputPath.artifacts);
   } catch (err) {
     mkdir(outputPath.artifacts);
   }
-  run(`vsce package -o ${outputPath.artifacts}`);
 
-  // Put it back so the dev environment works again :)
-  run('npm install');
+  rm('-rf', 'client/*.packed.js');
+  rm('-rf', 'server/*.packed.js');
+  run(`node_modules/.bin/webpack-cli --config ./client/webpack.config.js`);
+  await generateServerPackagingReports();
+
+  run(`vsce package -o ${outputPath.artifacts}`);
 };
 
 target.publish = async (args) => {
@@ -108,4 +108,33 @@ function run(cl, capture = false) {
   }
 
   return (output || '').toString().trim();
+}
+
+/**
+ * Generates reports to help 'manually webpack' the server plugin.
+ */
+async function generateServerPackagingReports() {
+  run(`node_modules/.bin/webpack-cli --config ./server/webpack.config.js --profile --json > ${outputPath.artifacts}/server-modules.json`);
+  console.log('Generating the list of modules used by the server.');
+  const serverModules = require(`${outputPath.artifacts}/server-modules.json`);
+  const names = jsonpath
+    .query(serverModules, '$..name')
+    .filter((v) => v.indexOf('node_modules') >= 0)
+    .map((v) => v.replace(/.*node_modules\/([^/]+).*/, '$1'))
+    .filter((v, i, a) => a.indexOf(v) === i) // unique items
+    .sort();
+
+  await fs.writeFile(path.join(outputPath.artifacts, 'server-module-names.txt'), names.join('\n'));
+
+  console.log('Generating potential .vscodeignore items for server.');
+  const potentialIgnores = [];
+  const serverNodeModules = await fs.readdir(path.join(__dirname, 'server', 'node_modules'), { withFileTypes: true });
+  serverNodeModules.filter((v) => v.isDirectory())
+    .map((v) => v.name)
+    .filter((v) => names.indexOf(v) === -1)
+    .forEach((v) => {
+      potentialIgnores.push(`server/node_modules/${v}`);
+    });
+
+  await fs.writeFile(path.join(outputPath.artifacts, 'server-vscodeignore.txt'), potentialIgnores.join('\n'));
 }

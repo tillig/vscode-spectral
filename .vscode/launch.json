@@ -17,7 +17,7 @@
       "outFiles": [
         "${workspaceFolder}/client/**/*.js"
       ],
-      "preLaunchTask": "npm: watch",
+      //"preLaunchTask": "npm: watch",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "sourceMaps": true,

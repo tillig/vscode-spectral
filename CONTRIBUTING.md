@@ -31,3 +31,11 @@ node make.js publish -- <pat>
 # List all the targets to see what you can do.
 node make.js --help
 ```
+
+The client portion of the plugin is webpacked.
+
+The server portion is not because of the dynamic way Spectral loads its rulesets. It tries to use `require.resolve` on a dynamically calculated ruleset path, which loads a JSON file, which itself has additional `.js` files it points to that need to be resolved using that dynamic `require.resolve`. If it fails to find the files, it falls back to using `unpkg.com`, but it doesn't cache the results. If you have a bad net connection or unpkg is misbehaving, you're hosed.
+
+I couldn't figure out how to get the rulesets to properly load but webpack "everything else." I'd love a PR if someone is better at webpack than I am.
+
+In the meantime, we use webpack to do some tree-shaking and analyze what actually gets used. The results get processed into some files dumped in the artifacts folder at package time, and we can use those to modify the `.vscodeignore` file.
