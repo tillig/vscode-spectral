@@ -1,7 +1,7 @@
 {
   "author": "Travis Illig",
   "dependencies": {
-    "@stoplight/spectral": "^5.1.0",
+    "@stoplight/spectral": "^5.3.0",
     "@types/urijs": "1.19.5",
     "minimatch": "^3.0.4",
     "vscode-languageserver": "^6.1.1",

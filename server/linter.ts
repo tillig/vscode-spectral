@@ -66,6 +66,7 @@ export class Linter {
       this.spectral.setRuleset({
         functions: {},
         rules: {},
+        exceptions: {},
       });
     }
 
