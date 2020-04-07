@@ -9,7 +9,8 @@
     "vscode-uri": "^2.1.1"
   },
   "devDependencies": {
-    "@types/minimatch": "^3.0.3"
+    "@types/minimatch": "^3.0.3",
+    "@types/node-fetch": "^2.5.5"
   },
   "engines": {
     "node": "*"

@@ -1,52 +1,27 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  FormatLookup,
   IRuleResult,
   Spectral,
-  isJSONSchema,
-  isJSONSchemaDraft2019_09, // eslint-disable-line
-  isJSONSchemaDraft4,
-  isJSONSchemaDraft6,
-  isJSONSchemaDraft7,
-  isJSONSchemaLoose,
-  isOpenApiv2,
-  isOpenApiv3,
 } from '@stoplight/spectral';
 import { parseYaml } from '@stoplight/spectral/dist/parsers';
 import { IParsedResult } from '@stoplight/spectral/dist/document';
 import { IRuleset } from '@stoplight/spectral/dist/types/ruleset';
 import { getLocationForJsonPath } from '@stoplight/yaml';
-
-/**
- * Mapping of format ID to detector function that can determine if a given
- * document is of that type.
- */
-const allFormats: Array<[string, FormatLookup]> = [
-  ['oas2', isOpenApiv2],
-  ['oas3', isOpenApiv3],
-  ['json-schema', isJSONSchema],
-  ['json-schema-loose', isJSONSchemaLoose],
-  ['json-schema-draft4', isJSONSchemaDraft4],
-  ['json-schema-draft6', isJSONSchemaDraft6],
-  ['json-schema-draft7', isJSONSchemaDraft7],
-  ['json-schema-2019-09', isJSONSchemaDraft2019_09] // eslint-disable-line
-];
+import { refResolver } from './resolver';
+import { registerFormats } from './formats';
 
 /**
  * Wrapper for the Spectral linter that runs linting against VS Code document
  * content in a manner similar to the Spectral CLI.
  */
 export class Linter {
-  private spectral = new Spectral();
+  private spectral = new Spectral({ resolver: refResolver });
 
   /**
    * Initializes a new instance of the linter.
    */
   constructor() {
-    for (const [format, lookup] of allFormats) {
-      // Each document type that Spectral can lint gets registered with detectors.
-      this.spectral.registerFormat(format, (document) => lookup(document));
-    }
+    registerFormats(this.spectral);
   }
 
   /**
