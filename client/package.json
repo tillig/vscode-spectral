@@ -4,9 +4,6 @@
     "vscode-languageclient": "^6.1.1"
   },
   "description": "Lint support for YAML, JSON, and OpenAPI using Spectral.",
-  "devDependencies": {
-    "@types/vscode": "^1.42.0"
-  },
   "displayName": "Spectral Linter",
   "engines": {
     "vscode": "^1.42.0"
