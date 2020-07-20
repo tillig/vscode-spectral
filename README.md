@@ -1,5 +1,9 @@
 # Spectral Linter for VS Code
 
+> :warning: **DEPRECATED!** I worked with the Stoplight team and they've [created an official Spectral extension based on my code.](https://github.com/stoplightio/vscode-spectral) [**Go install it from the marketplace.**](https://marketplace.visualstudio.com/items?itemName=stoplight.spectral) I won't be enhancing this extension anymore and will, instead, be contributing to theirs.
+
+---
+
 Extension for VS Code to run linting on OpenAPI, JSON, and YAML documents using [Spectral](https://stoplight.io/open-source/spectral/).
 
 Spectral supports linting all types of YAML and JSON documents using [configurable rulesets](https://stoplight.io/p/docs/gh/stoplightio/spectral/docs/getting-started/rulesets.md). It ships by default with [OpenAPI support](https://stoplight.io/p/docs/gh/stoplightio/spectral/docs/getting-started/openapi.md), but you can create your own ruleset.
