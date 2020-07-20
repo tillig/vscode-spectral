@@ -4,6 +4,8 @@ import {
   window as Window,
   workspace as Workspace,
   FileSystemWatcher,
+  ViewColumn,
+  commands,
 } from 'vscode';
 import {
   DidChangeWatchedFilesNotification,
@@ -78,6 +80,22 @@ function sendFileChangeNotification(uri: string, type: FileChangeType): void {
  * @param {ExtensionContext} context - Information about the extension runtime that can be used during activation.
  */
 export function activate(context: ExtensionContext): void {
+  // DISPLAY THE DEPRECATION NOTICE. The official Spectral extension is the way to go.
+  const panel = Window.createWebviewPanel(
+    'tilligSpectralDeprecated',
+    'Switch to Official Spectral Extension',
+    ViewColumn.One,
+    { enableScripts: true });
+  panel.webview.html = getDeprecationMessage();
+  panel.webview.onDidReceiveMessage(
+    (message) => {
+      switch (message.command) {
+        case 'install':
+          commands.executeCommand('workbench.extensions.search', 'stoplight.spectral travisillig.vscode-spectral');
+          return;
+      }
+    });
+
   const serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
 
   // Debug will listen on port 6262 in Node Inspector mode so VS Code can
@@ -97,6 +115,48 @@ export function activate(context: ExtensionContext): void {
       },
     },
   };
+
+  /**
+   * Gets the HTML for the extension deprecation message.
+   * @return {string} An HTML string for display in a webview.
+   */
+  function getDeprecationMessage(): string {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src vscode-resource:; script-src 'unsafe-inline' vscode-resource:; style-src 'unsafe-inline' vscode-resource:; img-src data: vscode-resource:;" />
+</head>
+<body>
+    <h1>Switch to the Official Spectral Extension!</h1>
+    <p>Dear Awesome Person (YOU!):</p>
+    <p>You currently have the <code>TravisIllig.vscode-spectral</code> extension installed, for which I, Travis, thank you.</p>
+    <p>I worked with the Stoplight team (the folks who own the Spectral linter) to create <b>an official Spectral extension</b> based on this extension. I'm going to be contributing to that extension, and that's the way forward.</p>
+    <p><b><a href="#" id="install">You should install the official extension and uninstall this one.</a></b> The settings, etc. should all port directly over.</p>
+    <p>If you prefer the command line, you can do that with: </p>
+    <ul>
+    <li><code>code --install-extension stoplight.spectral</code></li>
+    <li><code>code --uninstall-extension TravisIllig.vscode-spectral</code></li>
+    </ul>
+    <p>I'm sorry for the inconvenience and hope to see you there so the Stoplight team and I can create the best linting experience for you.</p>
+    <p>- Travis</p>
+    <p><i>PS: This message will display every time VS Code opens and this deprecated extension is activated.</i></p>
+    <script>
+    (function () {
+      const vscode = acquireVsCodeApi();
+      document.getElementById('install').onclick = function() {
+        vscode.postMessage({
+          command: 'install'
+        });
+      };
+    }());
+    </script>
+</body>
+</html>`;
+  }
 
   const clientOptions: LanguageClientOptions = {
     // Register for all files and untitled documents. The settings

@@ -69,7 +69,7 @@
       "type": "object"
     }
   },
-  "description": "Lint support for OpenAPI, JSON, and YAML using Spectral.",
+  "description": "[DEPRECATED - switch to stoplight.spectral extension] Lint support for OpenAPI, JSON, and YAML using Spectral.",
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/mocha": "^7.0.2",
